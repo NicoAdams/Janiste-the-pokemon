@@ -1,0 +1,13 @@
+{
+  "name": "Janiste-the-pokemon",
+  "version": "1.0.0",
+  "description": "temp!",
+  "main": "index.js",
+  "repository": "https://github.com/NicoAdams/Janiste-the-pokemon.git",
+  "author": "Steven Kalt <kalt.steven@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  }
+}

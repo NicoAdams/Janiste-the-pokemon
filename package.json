@@ -8,8 +8,8 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "format": "prettier --write ./src",
-    "start": "parcel watch ./src/index.html"
+    "format": "prettier --write ./src ./package.json",
+    "start": "parcel ./src/index.html"
   },
   "devDependencies": {
     "parcel": "^1.12.4",

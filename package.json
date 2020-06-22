@@ -8,7 +8,8 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "serve": "parcel ./src/index.html"
   },
   "devDependencies": {
     "parcel": "^1.12.4",

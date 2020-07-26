@@ -4,9 +4,9 @@ import { storeonDevtools } from "storeon/devtools";
 import {segment} from "./segment";
 
 const origin = {x:250,y:250},
-length = 100;
+length = 40;
 
-const initialTheta = Math.PI/5;
+const initialTheta = Math.PI/12;
 const initialLengthMultiplier = .8;
 
 
@@ -25,14 +25,14 @@ let lengthMultiplier = store => {
 }
 
 let leaves = store => {
-  store.on('@init', () => ({ leaves: [new segment(origin,length, store.get()["theta"])] }))
+  store.on('@init', () => ({ leaves: [new segment(origin,length, 0),new segment(origin,length, Math.PI/2),new segment(origin,length, Math.PI),new segment(origin,length, -Math.PI/2)] }))
   store.on('generateNewLeaves', () => {
   	let newLeaves = []
   	for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
   		let state = store.get()
   		let branch = state["leaves"][i]
-  		let theta = state["theta"]
-  		let lengthMultiplier = state["l"]
+  		let theta = state["theta"]*(.9+Math.random()*.2)
+  		let lengthMultiplier = state["l"]*(.9+Math.random()*.2)
   		newLeaves.push(new segment(branch.terminus,branch.length*lengthMultiplier,branch.angle+theta))
   		newLeaves.push(new segment(branch.terminus,branch.length*lengthMultiplier,branch.angle-theta))
   }
@@ -46,14 +46,23 @@ let render = store => {
   const assignViewport = (_, viewport) => ({ viewport });
   store.on('assignViewport',assignViewport)
 
-  store.on('render', ({  }) => { for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
+  
+
+  store.on('render', ({  }) => { 
+	let ctx = store.get()["viewport"]
+	ctx.lineWidth = .1;
+	
+  	for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
   	let leaf = store.get()["leaves"][i]
-  	leaf.render(store.get()["viewport"])
-  } })
+  	ctx.moveTo( leaf.x1, leaf.y1);
+	ctx.lineTo( leaf.x2, leaf.y2);
+  } 
+	ctx.stroke();
+})
 }
 
 let tick = store => {
-  store.on('tick', ({ newL }) => {store.dispatch("generateNewLeaves"); store.dispatch("render");})
+  store.on('tick', ({}) => {store.dispatch("generateNewLeaves"); store.dispatch("render");})
 }
 
 

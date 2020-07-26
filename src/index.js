@@ -21,6 +21,6 @@ store.dispatch("assignViewport", ctx);
 // let startY = h/2
 
 
-let counter = 0
-let interval = window.setInterval(function(){store.dispatch("tick");counter+=1},100)
-window.setInterval(function(){if (counter>11) {counter = 0;window.clearInterval(interval);console.log(store.get())}},100)
+	
+
+document.getElementById("button").onclick = function(){store.dispatch("tick")};

@@ -33,8 +33,6 @@ function Sound(path) {
   this.load();
 }
 
-
-
 window.onclick = function () {
   // the audio context must be initialized AFTER user input
   initAudioContext();

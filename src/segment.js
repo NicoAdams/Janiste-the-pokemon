@@ -8,15 +8,23 @@ export const segment = function(origin, length, angle) {
 	this.y2 = origin.y+length*Math.sin(angle)
 	this.terminus = {x:this.x2,y:this.y2}
 
-	this.render = function(gameViewport){
-		gameViewport.append("line")
-					.attr("x1", this.x1)
-					.attr("y1", this.y1)
-					.attr("x2", this.x2)
-					.attr("y2", this.y2)
-					.attr("stroke-width",1)
-					.attr("stroke-linecap","round")
-					.attr("stroke", "black");
+	this.render = function(ctx){
+		ctx.moveTo( this.x1, this.y1);
+		ctx.lineTo( this.x2, this.y2);
+		ctx.lineWidth = 2;
+		ctx.stroke();
 	}
 }
 
+// function draw() {
+//   var canvas = document.getElementById('canvas');
+//   if (canvas.getContext) {
+//     var ctx = canvas.getContext('2d');
+
+//     ctx.beginPath();
+    
+//     ctx.lineTo(100, 75);
+//     ctx.lineTo(100, 25);
+//     ctx.fill();
+//   }
+// }

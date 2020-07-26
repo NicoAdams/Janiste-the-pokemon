@@ -3,7 +3,7 @@ import { createStoreon } from "storeon";
 import { storeonDevtools } from "storeon/devtools";
 import {segment} from "./segment";
 
-const origin = {x:0,y:0},
+const origin = {x:250,y:250},
 length = 100;
 
 const initialTheta = Math.PI/5;
@@ -45,15 +45,15 @@ let render = store => {
   store.on('@init', () => ({ viewport: null}))
   const assignViewport = (_, viewport) => ({ viewport });
   store.on('assignViewport',assignViewport)
+
   store.on('render', ({  }) => { for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
   	let leaf = store.get()["leaves"][i]
-  	console.log(store.get())
   	leaf.render(store.get()["viewport"])
   } })
 }
 
 let tick = store => {
-  store.on('tick', ({ newL }) => {store.dispatch("generateNewLeaves"); store.dispatch("render")})
+  store.on('tick', ({ newL }) => {store.dispatch("generateNewLeaves"); store.dispatch("render");})
 }
 
 

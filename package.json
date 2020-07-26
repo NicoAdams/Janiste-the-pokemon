@@ -13,7 +13,8 @@
   },
   "devDependencies": {
     "parcel": "^1.12.4",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "sass": "^1.26.10"
   },
   "dependencies": {
     "d3": "^5.16.0",

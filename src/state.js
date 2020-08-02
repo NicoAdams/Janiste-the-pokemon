@@ -4,21 +4,22 @@ import { storeonDevtools } from "storeon/devtools";
 import { segment } from "./segment";
 
 const origin = { x: 500, y: 1000 },
-
-length = 100;
+  length = 100;
 
 const initialTheta = Math.PI / 5;
-const initialThetaRandomness = .5
+const initialThetaRandomness = 0.5;
 const initialWidth = 10;
-const initialLength = .7;
-const initialLengthRandomness = .5;
-
+const initialLength = 0.7;
+const initialLengthRandomness = 0.5;
+const numSplits = 2;
 
 let angle = (store) => {
   store.on("@init", () => ({ theta: initialTheta }));
-  store.on("@init", () => ({ thetaRandomnes: initialThetaRandomness}));
+  store.on("@init", () => ({ thetaRandomnes: initialThetaRandomness }));
   store.on("setAngle", ({ newTtheta }) => ({ theta: newTtheta }));
-  store.on("setAngleRandomness", ({ newThetaRandomnes }) => ({ thetaRandomnes: newThetaRandomnes }));
+  store.on("setAngleRandomness", ({ newThetaRandomnes }) => ({
+    thetaRandomnes: newThetaRandomnes,
+  }));
 };
 
 let width = (store) => {
@@ -32,11 +33,12 @@ let lengthMultiplier = (store) => {
   store.on("@init", () => ({ length: initialLength }));
   store.on("@init", () => ({ lengthRandomnes: initialLengthRandomness }));
   store.on("setLength", ({ newL }) => ({ length: newL }));
-  store.on("setLengthRandomness", ({ newLengthRandomness }) => ({ lengthRandomness: newLengthRandomness }));
+  store.on("setLengthRandomness", ({ newLengthRandomness }) => ({
+    lengthRandomness: newLengthRandomness,
+  }));
 };
 
 let leaves = (store) => {
-
   store.on("@init", () => ({
     leaves: [new segment(origin, length, -Math.PI / 2)],
   }));
@@ -45,34 +47,32 @@ let leaves = (store) => {
     for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
       let state = store.get();
       let branch = state["leaves"][i];
-      console.log(state["lengthRandomnes"])
-      let theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
-      let lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
-      newLeaves.push(
-        new segment(
-          branch.terminus,
-          branch.length * lengthMultiplier,
-          branch.angle + theta
-        )
-      );
-      theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
-      lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
-      newLeaves.push(
-        new segment(
-          branch.terminus,
-          branch.length * lengthMultiplier,
-          branch.angle - theta
-        )
-      );
-      theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
-      lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
-      newLeaves.push(
-        new segment(
-          branch.terminus,
-          branch.length * lengthMultiplier,
-          branch.angle
-        )
-      );
+      let index;
+      let theta;
+      let lengthMultiplier;
+      for (var j = numSplits - 1; j >= 0; j--) {
+        index = j / (numSplits - 1);
+        theta =
+          -state["theta"] +
+          index *
+            2 *
+            state["theta"] *
+            (1 -
+              state["thetaRandomnes"] / 2 +
+              Math.random() * state["thetaRandomnes"]);
+        lengthMultiplier =
+          state["length"] *
+          (1 -
+            state["lengthRandomnes"] / 2 +
+            Math.random() * state["lengthRandomnes"]);
+        newLeaves.push(
+          new segment(
+            branch.terminus,
+            branch.length * lengthMultiplier,
+            branch.angle + theta
+          )
+        );
+      }
     }
     return { leaves: newLeaves };
   });
@@ -105,7 +105,7 @@ let render = (store) => {
       "rgb(" +
       (255 * state["width"]) / 20 +
       ", " +
-      (255 * 1) / state["width"] +
+      Math.min((255 * 1) / state["width"], 180) +
       "," +
       Math.random() * 25 +
       ")";

@@ -4,15 +4,21 @@ import { storeonDevtools } from "storeon/devtools";
 import { segment } from "./segment";
 
 const origin = { x: 500, y: 1000 },
-  length = 100;
 
-const initialTheta = Math.PI / 12;
+length = 100;
+
+const initialTheta = Math.PI / 5;
+const initialThetaRandomness = .5
 const initialWidth = 10;
-const initialLengthMultiplier = 0.8;
+const initialLength = .7;
+const initialLengthRandomness = .5;
+
 
 let angle = (store) => {
   store.on("@init", () => ({ theta: initialTheta }));
+  store.on("@init", () => ({ thetaRandomnes: initialThetaRandomness}));
   store.on("setAngle", ({ newTtheta }) => ({ theta: newTtheta }));
+  store.on("setAngleRandomness", ({ newThetaRandomnes }) => ({ thetaRandomnes: newThetaRandomnes }));
 };
 
 let width = (store) => {
@@ -22,24 +28,26 @@ let width = (store) => {
 };
 
 let lengthMultiplier = (store) => {
-  store.on("@init", () => ({ l: initialLengthMultiplier }));
-  store.on("setLengthMultiplier", ({ newL }) => ({ l: newL }));
+  // the "Length" is how much to scale the parent branch length by when generating the child leaf.
+  store.on("@init", () => ({ length: initialLength }));
+  store.on("@init", () => ({ lengthRandomnes: initialLengthRandomness }));
+  store.on("setLength", ({ newL }) => ({ length: newL }));
+  store.on("setLengthRandomness", ({ newLengthRandomness }) => ({ lengthRandomness: newLengthRandomness }));
 };
 
 let leaves = (store) => {
+
   store.on("@init", () => ({
     leaves: [new segment(origin, length, -Math.PI / 2)],
   }));
   store.on("generateNewLeaves", () => {
     let newLeaves = [];
-    // console.log(store.get()["leaves"].length);
     for (var i = store.get()["leaves"].length - 1; i >= 0; i--) {
       let state = store.get();
       let branch = state["leaves"][i];
-      // let theta = state["theta"] * (0.9 + Math.random() * 0.2);
-      let theta = state["theta"]
-      // let lengthMultiplier = state["l"] * (0.9 + Math.random() * 0.2);
-      let lengthMultiplier = state["l"] 
+      console.log(state["lengthRandomnes"])
+      let theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
+      let lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
       newLeaves.push(
         new segment(
           branch.terminus,
@@ -47,11 +55,22 @@ let leaves = (store) => {
           branch.angle + theta
         )
       );
+      theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
+      lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
       newLeaves.push(
         new segment(
           branch.terminus,
           branch.length * lengthMultiplier,
           branch.angle - theta
+        )
+      );
+      theta = state["theta"]*((1-state["thetaRandomnes"]/2)+Math.random()*state["thetaRandomnes"]);
+      lengthMultiplier = state["length"]*((1-state["lengthRandomnes"]/2)+Math.random()*state["lengthRandomnes"]);
+      newLeaves.push(
+        new segment(
+          branch.terminus,
+          branch.length * lengthMultiplier,
+          branch.angle
         )
       );
     }
@@ -69,27 +88,30 @@ let render = (store) => {
   store.on("assignViewport", assignViewport);
 
   store.on("render", ({}) => {
-  	let state = store.get()
+    let state = store.get();
     let ctx = state["viewport"];
-    
+
     console.log(state["leaves"].length);
-     ctx.beginPath();
+    ctx.beginPath();
     for (let i = state["leaves"].length - 1; i >= 0; i--) {
       // console.log(state["leaves"])
       let leaf = state["leaves"][i];
       ctx.moveTo(leaf.x1, leaf.y1);
       ctx.lineTo(leaf.x2, leaf.y2);
       // console.log([leaf.x2, leaf.y2])
-
     }
     ctx.lineWidth = state["width"];
-    ctx.strokeStyle = 'rgb('+Math.random()*255+', ' + Math.random()*255+ ','+Math.random()*255+')';
+    ctx.strokeStyle =
+      "rgb(" +
+      (255 * state["width"]) / 20 +
+      ", " +
+      (255 * 1) / state["width"] +
+      "," +
+      Math.random() * 25 +
+      ")";
     ctx.stroke();
-    
-    
-    
 
-    store.dispatch("assignwidth",state["width"]*.9)
+    store.dispatch("assignwidth", state["width"] * 0.8);
   });
 };
 

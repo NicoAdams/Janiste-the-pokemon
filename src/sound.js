@@ -1,6 +1,6 @@
 var audioContext;
 import dingPath from "./assets/sounds/ding.mp3";
-import treedude from "./assets/sounds/Tree dude 2.wav"
+import treedude from "./assets/sounds/Tree dude 2.wav";
 
 function initAudioContext() {
   window.AudioContext = window.AudioContext || window.webkitAudioContext;

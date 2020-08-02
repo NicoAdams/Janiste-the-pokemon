@@ -1,5 +1,6 @@
 var audioContext;
 import dingPath from "./assets/sounds/ding.mp3";
+import treedude from "./assets/sounds/Tree dude 2.wav"
 
 function initAudioContext() {
   window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -25,6 +26,7 @@ function Sound(path) {
 
   this.play = function () {
     var source = audioContext.createBufferSource();
+    source.loop = true;
     source.buffer = self.buffer;
     source.connect(audioContext.destination);
     source.start(0);
@@ -33,14 +35,15 @@ function Sound(path) {
   this.load();
 }
 
-window.onclick = function () {
-  // the audio context must be initialized AFTER user input
-  initAudioContext();
-  // sounds must be generated after the audio context is initialized
-  const ding = new Sound(dingPath);
+// window.onclick = function () {
+//   // the audio context must be initialized AFTER user input
+//   initAudioContext();
+//   // sounds must be generated after the audio context is initialized
+//   const ding = new Sound(treedude);
 
-  // once ding is loaded it can be played any time.
-  window.onclick = function () {
-    ding.play();
-  };
-};
+//   // once ding is loaded it can be played any time.
+//   window.onclick = function () {
+//     ding.play();
+//      window.onclick = function () {}
+//   };
+// };
